@@ -1,1 +1,0 @@
-{"version":3,"sources":["index.css","App.css"],"names":[],"mappings":"AAAA,kBACE,QAAS,CACT,+BAAiC,CACjC,UACF,CCJA,KACE,iBACF","file":"main.c4136b7f.chunk.css","sourcesContent":["body, button, input {\n  margin: 0;\n  font-family: 'Barlow', sans-serif;\n  color: #fff;\n}\n\n",".App {\n  text-align: center;\n}"]}
