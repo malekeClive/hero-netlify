@@ -30,16 +30,15 @@ function App() {
       console.log(url);
       const sendUrl       = await fetch(url);
       console.log(sendUrl);
-      const responseJSON  = await sendUrl.json();
-      if (responseJSON.result === "FAIL") {
+      if (sendUrl.result === "FAIL") {
         setHeroes([]);
         setLoading(false);
-        return setError(responseJSON.message);
+        return setError(sendUrl.message);
       }
-      console.log(responseJSON);
+      console.log(sendUrl);
       setLoading(false);
       setError("");
-      setHeroes(responseJSON);
+      setHeroes(sendUrl);
     } catch (err) {
       setError(err);
       console.log("error", err);
