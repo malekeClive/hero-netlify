@@ -34,6 +34,7 @@ function App() {
         setLoading(false);
         return setError(responseJSON.message);
       }
+      console.log(responseJSON);
       setLoading(false);
       setError("");
       setHeroes(responseJSON);
