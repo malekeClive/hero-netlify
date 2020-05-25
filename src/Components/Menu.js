@@ -24,6 +24,7 @@ export default function Menu({ clickedMenu, setClickedMenu }) {
         border-radius: 5px;
         width: 47%;
         font-size: 15px;
+        cursor: pointer;
       }
     `}>
       <div className={clickedMenu === 0 ? clicked : unClicked} onClick={() => setClickedMenu(0)}>

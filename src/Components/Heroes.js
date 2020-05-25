@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 
 import { css } from 'emotion';
 
-export default function Heroes({heroes, heroAction}) {
+export default function Heroes({ heroes, heroAction }) {
   const [ isClicked, setIsClicked ]     = useState(false);
   const [ heroDetails, setHeroDetails ] = useState({});
+
+  useEffect(() => {
+    console.log(isClicked);
+  }, [ isClicked ]);
 
   const resetValueAndCloseModal = () => {
     setIsClicked(false);
@@ -14,7 +18,6 @@ export default function Heroes({heroes, heroAction}) {
   function onClickedSearchHero(id) {
     setIsClicked(true);
     const getHero = heroes.find(val => val.id === id);
-    console.log(getHero);
     setHeroDetails(getHero);
   }
 
@@ -34,15 +37,15 @@ export default function Heroes({heroes, heroAction}) {
 }
 
 function Modal({ heroDetails, resetVal, isClicked, heroAction }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [ isOpen, setIsOpen ] = useState(false);
 
   useEffect(() => {
     setIsOpen(isClicked);
   }, [ isClicked ]);
 
-  const test = (id) => {
-    heroAction(id);
+  const onHeroClickHandler = (heroDetails) => {
     resetVal();
+    return heroAction(heroDetails);
   }
 
   return (
@@ -95,11 +98,7 @@ function Modal({ heroDetails, resetVal, isClicked, heroAction }) {
           padding: 20px 0;
         }
       `}>
-        { heroDetails.hasOwnProperty("liked") ? 
-          <button onClick={() => test(heroDetails.id)} type="button">Remove as favorite</button>
-        : 
-          <button onClick={() => heroAction(heroDetails)} type="button">Add to favorite</button>
-        }
+        <button onClick={() => onHeroClickHandler(heroDetails)} type="button">{ heroDetails.hasOwnProperty("liked") ? "Remove as favorite" : "Add to favorite" }</button>
       </div>
 
       <div className={css`
@@ -142,6 +141,8 @@ function PowerStats({ heroDetails }) {
 
   return (
     <div className={css`
+      position: absolute;
+      bottom: 100px;
       margin-top: 100px;
       display: grid;
       align-items: center;

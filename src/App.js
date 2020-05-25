@@ -8,52 +8,35 @@ import Menu from './Components/Menu';
 import Heroes from './Components/Heroes';
 
 function App() {
-  const [ heroName, setHeroName ]         = useState([]);
-  const [ favoriteHero, setFavoriteHero ] = useState([]);
+  const [ heroes, setHeroes ]             = useState([]); // hero list
+  const [ favoriteHero, setFavoriteHero ] = useState([]); // favorite hero list
   const [ hasError, setError ]            = useState("");
   const [ searchInput, setSearchInput ]   = useState("");
-  const [ menu, setMenu ]                 = useState(1);
+  const [ menuBtn, setMenuBtn ]           = useState(1);
   const [ loading, setLoading ]           = useState(false);
 
+  const _MENU = { favoriteMenu: 0, searchMenu: 1 };
+
   useEffect(() => {
-    setHeroName([]);
-    setSearchInput("");
-  }, [ menu ]); // re-render component if something has changed in menu
-
-  const CheckClickedMenu = () => {
-    if (menu === 0) {
-      return (<Heroes 
-              heroes={favoriteHero} 
-              heroAction={onRemoveHeroFromMyFavorite}
-            />);
-    }
-    return searchCheck(hasError, heroName);
-  }
-
-  const searchCheck = (hasError, heroName) => {
-    if (hasError === "" && heroName.length === 0) return null;
-    if (hasError !== "") return <div>kosong</div>;
-    return (<Heroes 
-            heroes={heroName} 
-            heroAction={onSetAsFavoriteHero} 
-            />);
-  }
+    setHeroes([]); // reset when switch menu button
+    setSearchInput(""); // reset when switch menu button
+  }, [ menuBtn ]); // re-render component if something has changed in menu
   
   const onSearchSubmit = async (e) => {
     try {
       e.preventDefault();
       setLoading(true);
-      const url           = (`/.netlify/functions/searchHero?heroName=${searchInput}`);
+      const url           = (`/.netlify/functions/searchHero?heroes=${searchInput}`);
       const sendUrl       = await fetch(url);
       const responseJSON  = await sendUrl.json();
       if (responseJSON.result === "FAIL") {
-        setHeroName([]);
+        setHeroes([]);
         setLoading(false);
         return setError(responseJSON.message);
       }
       setLoading(false);
       setError("");
-      setHeroName(responseJSON);
+      setHeroes(responseJSON);
     } catch (err) {
       setError(err);
       console.log("error", err);
@@ -67,16 +50,17 @@ function App() {
     const existedHero = favoriteHero.some(val => val.id === hero.id);
     if (existedHero) return; // if hero exist in favoriteHero
 
-    if (favoriteHero.length === 0) return setFavoriteHero([...favoriteHero, heroList]); // if no Favorite yet
+    // if no Favorite yet
+    if (favoriteHero.length === 0) return setFavoriteHero([...favoriteHero, heroList]);
 
     setFavoriteHero([...favoriteHero, heroList]) // add new one
   }
 
   const onRemoveHeroFromMyFavorite = (heroId) => {
     const copyFavHero = [...favoriteHero];
-    const newFavHero = favoriteHero.findIndex(hero => hero.id === heroId);
-    copyFavHero.splice(newFavHero, 1);
-    return setFavoriteHero([...copyFavHero]);
+    const newFavHero  = favoriteHero.findIndex(hero => hero.id === heroId.id);
+    copyFavHero.splice(newFavHero, 1); // remove hero from favorite list
+    return setFavoriteHero([...copyFavHero]); // add new favorite heroes
   }
 
   return (
@@ -85,17 +69,69 @@ function App() {
         searchHandler={onSearchSubmit} 
         setSearchInputHandler={setSearchInput} 
         searchInputHandler={searchInput} />
-      <Menu clickedMenu={menu} setClickedMenu={setMenu} />
-      <div className={css`
-        display: ${loading === true ? "inline-block" : "none"};
-        background-color: rgba(15, 15, 15, 1);
-        color: white;
-        width: 100%;
-        height: 10%;
-      `}><p>Loading</p></div>
-      <CheckClickedMenu />
+      <Menu clickedMenu={menuBtn} setClickedMenu={setMenuBtn} />
+      {loading === true ?
+        <div className={css`
+          color: black;
+          margin 0 auto;
+          border-radius: 5px;
+          width: 30%;
+
+          animation-duration: 1s;
+          animation-name: changeOpacity;
+          animation-iteration-count: infinite;
+          animation-direction: alternate;
+
+          @keyframes changeOpacity {
+            from {
+              opacity: 0%;
+            }
+            to {
+              oopacity: 100%
+            }
+          }
+
+          > p {
+            padding: 10px 0;
+            font-size: 25px;
+          }
+        `}><p>Loading...</p>
+        </div>
+      :
+        null
+      }
+
+      {menuBtn === _MENU.favoriteMenu ? 
+        <SearchHeroResults 
+          heroes={favoriteHero} 
+          onAction={onRemoveHeroFromMyFavorite}
+          msg="You have no favorite hero" />
+      :
+        <SearchHeroResults 
+          heroes={heroes} 
+          onAction={onSetAsFavoriteHero}
+          msg="Search Result" />
+      }
     </div>
+
   );
+}
+
+const SearchHeroResults = ({ heroes, onAction, msg }) => {
+  if (heroes.length === 0) return <NoData msg={msg} />;
+  return <Heroes heroes={heroes} heroAction={onAction} />;
+}
+
+const NoData = ({msg=""}) => {
+  return (
+    <div className={css`
+      width: 100%;
+      color: black;
+      font-size: 20px;
+    `}>
+      {msg}
+    </div>
+  )
 }
 
 export default App;

@@ -2,7 +2,6 @@
 import proxy from 'http-proxy-middleware';
 
 export default app => {
-  console.log("====================");
   const basePath = '/.netlify/functions';
 
   app.use(

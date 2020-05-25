@@ -19,9 +19,10 @@ export default function SearchInput({ searchHandler, setSearchInputHandler ,sear
           text-align: left;
         `} onSubmit={searchHandler} >
         <input ref={inputSearch} className={css`
+          color: black;
           border: none;
-          font-size: 20px;
-        `} placeholder="Search Hero..." type="text" onChange={e => setSearchInputHandler(e.target.value)} value={searchInputHandler} />
+          font-size: 25px;
+        `} placeholder="Find Hero..." type="text" onChange={e => setSearchInputHandler(e.target.value)} value={searchInputHandler} />
       </form>
     </div>
   )
