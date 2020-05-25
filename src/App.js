@@ -27,7 +27,9 @@ function App() {
       e.preventDefault();
       setLoading(true);
       const url           = (`/.netlify/functions/searchHero?heroes=${searchInput}`);
+      console.log(url);
       const sendUrl       = await fetch(url);
+      console.log(sendUrl);
       const responseJSON  = await sendUrl.json();
       if (responseJSON.result === "FAIL") {
         setHeroes([]);
