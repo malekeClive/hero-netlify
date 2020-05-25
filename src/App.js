@@ -26,7 +26,7 @@ function App() {
     try {
       e.preventDefault();
       setLoading(true);
-      const url           = (`/.netlify/functions/searchHero?heroes=${searchInput}`);
+      const url           = (`/.netlify/functions/searchHero?heroName=${searchInput}`);
       const sendUrl       = await fetch(url);
       const responseJSON  = await sendUrl.json();
       if (responseJSON.result === "FAIL") {
@@ -105,20 +105,24 @@ function App() {
         <SearchHeroResults 
           heroes={favoriteHero} 
           onAction={onRemoveHeroFromMyFavorite}
-          msg="You have no favorite hero" />
+          msg="You have no favorite hero"
+          loading={loading}
+           />
       :
         <SearchHeroResults 
           heroes={heroes} 
           onAction={onSetAsFavoriteHero}
-          msg="Search Result" />
+          msg="Search Result"
+          loading={loading}
+           />
       }
     </div>
 
   );
 }
 
-const SearchHeroResults = ({ heroes, onAction, msg }) => {
-  if (heroes.length === 0) return <NoData msg={msg} />;
+const SearchHeroResults = ({ heroes, onAction, msg, loading }) => {
+  if (heroes.length === 0 && !loading) return <NoData msg={msg} />;
   return <Heroes heroes={heroes} heroAction={onAction} />;
 }
 
